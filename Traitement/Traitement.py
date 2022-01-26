@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from PIL import Image
 from scipy.optimize import fsolve
 
 def traitement(dim_cible,coord_m1,coord_m2,coord_m3,data) :
@@ -61,8 +63,21 @@ def traitement(dim_cible,coord_m1,coord_m2,coord_m3,data) :
 
     axes()
 
-    plt.contour(x, y, parabole1(x,y), [0], colors='k')
-    plt.contour(x, y, parabole2(x,y), [0], colors='r')
+    # plt.contour(x, y, parabole1(x,y), [0], colors='k')
+    # plt.contour(x, y, parabole2(x,y), [0], colors='r')
+
+    img_cible = np.array(Image.open('.\Traitement\cible.png'),dtype=np.uint8)
+
+    fig,ax = plt.subplots(1)
+
+    ax.set_xlim(-largeur/2, largeur/2)
+    ax.set_ylim(-hauteur/2, hauteur/2)
+
+    ax.imshow(img_cible)
+
+    circle = patches.Circle(solution[0],solution[1])
+
+    #ax.add_patch(circle)
 
     plt.show()
 
