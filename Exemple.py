@@ -58,9 +58,12 @@ mapping = [c - 1 for c in args.channels]  # Channel numbers start with 1
 
 q = queue.Queue()
 
+mmax =0
+
 
 def audio_callback(indata, frames, time, status):
     """This is called (from a separate thread) for each audio block."""
+    global mmax
     if status:
         print(status, file=sys.stderr)
     # indata est un tableau de table du style
@@ -73,10 +76,14 @@ def audio_callback(indata, frames, time, status):
 
     amplitude = np.linalg.norm(indata)
 
+    if amplitude > mmax:
+        mmax = amplitude
+        print(mmax)
+
     #FILTRE CUSTOM LOL
-    if(amplitude < 3):
-        for i in range(len(indata)):
-            indata[i] = [0.0]
+    # if(amplitude < 3):
+    #     for i in range(len(indata)):
+    #         indata[i] = [0.0]
     
     q.put(indata[::args.downsample, mapping])
 
@@ -139,7 +146,7 @@ try:
     # args.device
     
     stream = sd.InputStream(
-        device=13, channels=max(args.channels),
+        device=args.device, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 

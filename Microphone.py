@@ -2,6 +2,7 @@ import sys
 import threading
 import numpy as np
 import sounddevice as sd
+import time
 
 
 class Microphone:
@@ -17,6 +18,7 @@ class Microphone:
         threading.Thread(target=self.process).start()
 
     def audio_callback(self, indata, frames, time, status):
+        import time
         """This is called (from a separate thread) for each audio block."""
         if status:
             print(status, file=sys.stderr)
@@ -29,8 +31,8 @@ class Microphone:
         # qui correspond à échantillon sur 1s/?
 
         amplitude = np.linalg.norm(indata)
-
         if(amplitude >= self.maxAmplitude):
+            # print("AVANT : "+ str(time.time()))
             self.callback(self.id)
 
     def process(self):
@@ -46,7 +48,8 @@ class Microphone:
                 stopCommande = 's' + str(self.id)
                 if commande == stopCommande:
                     print("Stop " + str(self.id) + " by user")
-                    exit()
+                    return
 
         except Exception as e:
             print(type(e).__name__ + ': ' + str(e))
+        print("BONSOIR")
